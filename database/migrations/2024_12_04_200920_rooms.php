@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('rooms', function (Blueprint $table) {
             $table->id();
             $table->integer('room_number');
-            $table->string('status');
+            $table->enum('status', ['empty', 'busy', 'maintenance'])->default('empty');
             $table->string('image');
             $table->foreignId('hotel_id')->references('id')->on('hotel');
             $table->foreignId('roomtypes_id')->references('id')->on('roomtypes');

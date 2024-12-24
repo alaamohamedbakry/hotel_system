@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotel;
 use App\Models\Room;
+use App\Models\Roomphoto;
 use App\Models\Roomtype;
 use Exception;
 use Illuminate\Http\Request;
@@ -44,11 +45,10 @@ class RoomController extends Controller
      */
     public function create()
     {
-        $room = new Room();
         $hotels = Hotel::all();
         $roomtype = Roomtype::all();
 
-        return view('admin.forms.rooms', compact('hotels', 'roomtype', 'room'));
+        return view('admin.forms.rooms', compact('hotels', 'roomtype'));
     }
 
 
@@ -59,7 +59,7 @@ class RoomController extends Controller
     {
         $request->validate([
             'room_number'=>'required',
-            'status'=>'required',
+            'status' => 'required|in:empty,busy,maintenance', // التحقق من الحالة
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'hotel_id'=>'required|numeric|exists:hotel,id',
             'roomtypes_id'=>'required|numeric|exists:roomtypes,id'
@@ -69,7 +69,7 @@ class RoomController extends Controller
             Room::create([
                 'image' => $request->file('image')->store('room_image', 'public'),
                 'room_number' => $request->room_number,
-                'status' => $request->status,
+                 'status' => $request->status,
                 'description' => $request->description,
                 'hotel_id' => $request->hotel_id,
                 'roomtypes_id' => $request->roomtypes_id
@@ -164,5 +164,67 @@ class RoomController extends Controller
 
     return response()->json(['error' => 'Room not found'], 404);
 }
+public function addroomimages(Request $request, $roomid)
+{
+    $room = Room::findOrFail($roomid);
+
+    // الحصول على الصور المخزنة
+    $roomimages = Roomphoto::where('room_id', $room->id)->get();
+
+    return view('admin.rooms.addphotos', [
+        'roomimages' => $roomimages,
+        'room' => $room
+    ]);
+}
+
+    public function removeroomphotos(Roomphoto $roomphoto)
+{
+    try {
+        if ($roomphoto->photopath) Storage::delete($roomphoto->photopath);
+        $roomphoto->delete();
+        return to_route('rooms.show.tables')->with('msg', 'productphoto deleted');
+    } catch (Exception $a) {
+        return to_route('rooms.show.tables')->with('msg', $a->getMessage());
+    }
+}
+
+public function storeroomimage(Request $request)
+{
+    $request->validate([
+        'image' => 'required|image',
+        'room_id' => 'required|numeric|exists:rooms,id'
+    ]);
+
+    try {
+        $photopath = $request->file('image')->store('room_image', 'public');
+
+        Roomphoto::create([
+            'photopath' => $photopath,
+            'room_id' => $request->room_id
+        ]);
+
+        // بعد حفظ الصورة بنجاح، نعيد التوجيه إلى الصفحة المناسبة
+        return redirect()->route('addroomimage', ['roomid' => $request->room_id])
+                         ->with('msg', 'Product added successfully.');
+    } catch (Exception $e) {
+        return redirect()->route('addroomimage', ['roomid' => $request->room_id])
+                         ->with('msg', $e->getMessage());
+    }
+}
+
+
+public function updateStatus(Request $request, $id)
+{
+    $room = Room::findOrFail($id);
+
+    $request->validate([
+        'status' => 'required|in:empty,busy,maintenance',
+    ]);
+
+    $room->update(['status' => $request->status]);
+
+    return back()->with('msg', 'Room status updated successfully.');
+}
+
 
 }

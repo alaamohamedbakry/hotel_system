@@ -29,7 +29,7 @@
             <th scope="col">Roomtype</th>
             <th scope="col">Created_at</th>
             <th scope="col">Updated_at</th>
-            <th scope="col">Details</th>
+            <th scope="col">add photos</th>
             <th scope="col">Edit</th>
             <th scope="col">Delete</th>
         </tr>
@@ -39,7 +39,7 @@
             <tr>
                 <td>{{ $loop->iteration }}</td>
                 <td>{{ $singleRoom->room_number }}</td>
-                <td>{{ $singleRoom->status }}</td>
+                <td>{{ ucfirst($singleRoom->status) }}</td>
                 <td>
                     @if ($singleRoom->image)
                         <img class="room-image" src="{{ asset('storage/' . $singleRoom->image) }}" alt="">
@@ -49,7 +49,8 @@
                 <td>{{ $singleRoom->roomtype->name }}</td>
                 <td>{{ $singleRoom->created_at }}</td>
                 <td>{{ $singleRoom->updated_at }}</td>
-                <td><a href="">View Details</a></td>
+                <td><a href="{{route('addroomimage',$singleRoom->id)}}">
+                    <i class="fa-solid fa-plus" style="color:black;">  </a></td>
                 <td class="action-buttons">
                     <a href="{{ route('rooms.edit', $singleRoom->id) }}">
                         <i class="fa-solid fa-user-pen"></i>

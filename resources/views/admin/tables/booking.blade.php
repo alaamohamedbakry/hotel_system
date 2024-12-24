@@ -47,7 +47,7 @@
                         <td>{{ $booking->room->hotel->name  }}</td>
                         <td>{{ $booking->created_at }}</td>
                         <td>{{ $booking->updated_at }}</td>
-                        <td><a href="">View Details</a></td>
+                        <td><a href="{{ route('booking.show',$booking->id) }}">View Details</a></td>
                         <td class="action-buttons">
                             <a href="{{ route('booking.edit',$booking->id) }}">
                                 <i class="fa-solid fa-user-pen"></i>

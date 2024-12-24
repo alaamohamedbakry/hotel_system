@@ -15,7 +15,7 @@ class Booking extends Model
         'checkindate',
         'checkoutdate',
     ];
-    
+
     public function guest(){
       return  $this->belongsTo(guest::class,'guest_id');
     }
@@ -25,4 +25,25 @@ class Booking extends Model
     public function payment(){
       return  $this->hasMany(payment::class);
     }
+
+
+
+
+    protected static function boot()
+  {
+    parent::boot();
+
+    static::saving(function ($booking) {
+        $room = $booking->room;
+        $room->update(['status' => 'busy']);
+    });
+
+    static::deleting(function ($booking) {
+        $room = $booking->room;
+        if (!$room->bookings()->exists()) {
+            $room->update(['status' => 'empty']);
+        }
+    });
+  }
+
 }

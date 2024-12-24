@@ -23,20 +23,8 @@
                                         @enderror
                                     </div>
 
-                                    <!-- Status -->
-                                    <div class="form-group col-md-6">
-                                        <label for="status">Status</label>
-                                        <input type="text" class="form-control" id="status" name="status"
-                                            value="{{ old('status') }}" placeholder="Enter status">
-                                        @error('status')
-                                            <small class="text-danger">{{ $message }}</small>
-                                        @enderror
-                                    </div>
-                                </div>
-
-                                <div class="form-row">
                                     <!-- Image -->
-                                    <div class="form-group col-md-12">
+                                    <div class="form-group col-md-6">
                                         <label for="image">Image</label>
                                         <input type="file" class="form-control" id="image" name="image">
                                         @error('image')
@@ -44,6 +32,19 @@
                                         @enderror
                                     </div>
                                 </div>
+                                    <div class="form-group col-md-6">
+                                     <label for="status">Status</label>
+                                       <select id="status" name="status" class="form-control">
+                                           @foreach (\App\Models\Room::$statuses as $status)
+                                             <option value="{{ $status }}" {{ old('status') == $status ? 'selected' : '' }}>
+                                                     {{ ucfirst($status) }}
+                                             </option>
+                                           @endforeach
+                                       </select>
+                                            @error('status')
+                                                <small class="text-danger">{{ $message }}</small>
+                                            @enderror
+                                    </div>
 
                                 <div class="form-row">
                                     <!-- Hotel Name -->

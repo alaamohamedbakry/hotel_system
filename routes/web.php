@@ -82,4 +82,9 @@ Route::get('/total-rooms', [DashboardController::class, 'total_rooms'])->name('t
 Route::get('/total-user', [DashboardController::class, 'total_user'])->name('total_user');
 Route::get('/total-hotels', [DashboardController::class, 'total_hotels'])->name('total_hotels');
 
+
+Route::patch('/rooms/{id}/status', [RoomController::class, 'updateStatus'])->name('rooms.update.status');
+Route::get('/Addroomimages/{roomid}', [RoomController::class, 'addroomimages'])->name('addroomimage');
+Route::post('/storeroomimage', [RoomController::class, 'storeroomimage'])->name('storeroomimage');
+Route::delete('/removephotos/{roomphoto}', [RoomController::class, 'removeroomphotos'])->name('removeroomphotos');
 require __DIR__ . '/auth.php';

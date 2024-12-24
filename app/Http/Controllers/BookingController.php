@@ -109,7 +109,8 @@ class BookingController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $booking = Booking::with('guest', 'room.roomtype', 'room.hotel')->findOrFail($id);
+        return view("admin.booking.show",compact("booking"));
     }
 
     /**
@@ -117,7 +118,7 @@ class BookingController extends Controller
      */
     public function edit(string $id)
 {
-    $booking = Booking::findOrFail($id); 
+    $booking = Booking::findOrFail($id);
     $rooms = Room::all();
     return view('admin.booking.edit', compact("booking", "rooms"));
 }
@@ -128,7 +129,7 @@ public function update(Request $request, Booking $booking)
         'checkindate' => 'required|date',
         'checkoutdate' => 'required|date',
         'room_id' => 'required|numeric|exists:rooms,id',
-        'guest_id' => 'required|numeric|exists:guests,id' 
+        'guest_id' => 'required|numeric|exists:guests,id'
     ]);
 
     try {
@@ -158,7 +159,7 @@ public function update(Request $request, Booking $booking)
             return to_route('booking.index')->with('msg',$e->getMessage());
 
         }
-        
+
     }
 
     public function getRoomDetails($id)

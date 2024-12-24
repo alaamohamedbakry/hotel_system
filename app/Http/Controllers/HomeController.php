@@ -117,4 +117,5 @@ class HomeController extends Controller
         $hotels= Hotel::all();
         return view('about',compact("hotels"));
     }
+    
 }
