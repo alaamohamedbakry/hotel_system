@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Hotel;
+use App\Models\Review;
 use App\Models\Room;
 use Exception;
 use Illuminate\Http\Request;
@@ -21,7 +22,8 @@ class HomeController extends Controller
     {
         $hotels= Hotel::all();
         $rooms=Room::all();
-        return view('index',compact("rooms","hotels"));
+        $reviews=Review::paginate(4);
+        return view('index',compact("rooms","hotels","reviews"));
     }
 
     /**

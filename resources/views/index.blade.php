@@ -1,37 +1,47 @@
 @extends('layouts.master')
 @section('content')
-<head>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
 
-</head>
+    <head>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <style>
+            .carousel-control-prev-icon,
+            .carousel-control-next-icon {
+                background-color: black;
+                /* تغيير اللون إلى الأسود */
+                background-size: 100%;
+                /* تعديل حجم الأيقونة */
+            }
+        </style>
+
+    </head>
 
     <body>
         <!-- msg -->
         @if (session()->has('msg'))
-        <div class="modal" id="bookingModal" tabindex="-1" role="dialog">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Booking Sent</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <p>
-                         {{ session('msg') }}
-                        </p>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            <div class="modal" id="bookingModal" tabindex="-1" role="dialog">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Booking Sent</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <p>
+                                {{ session('msg') }}
+                            </p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
-                modal.show();
-            });
-        </script>
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    var modal = new bootstrap.Modal(document.getElementById('bookingModal'));
+                    modal.show();
+                });
+            </script>
         @endif
         <!-- Header Slider Start -->
         <div id="headerSlider" class="carousel slide" data-ride="carousel">
@@ -287,53 +297,113 @@
             </div>
         </div>
         <!-- Subscribe Section End -->
+        <!-- Review Section Carousel -->
+        <div id="reviewCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="60000">
+            <!-- Indicators -->
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="0" class="active"
+                    aria-current="true" aria-label="Review Form"></button>
+                <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="1"
+                    aria-label="Submitted Reviews"></button>
+            </div>
 
-        <!-- Review Section Start -->
+            <!-- Carousel Inner -->
+            <div class="carousel-inner">
+                <!-- Review Form Slide -->
+                <div id="reviewCarousel" class="mt-6 carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="0" class="active"
+                            aria-current="true" aria-label="Review Form"></button>
+                        <button type="button" data-bs-target="#reviewCarousel" data-bs-slide-to="1"
+                            aria-label="Submitted Reviews"></button>
+                    </div>
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="container my-5">
+                                <h2 class="mb-4 text-center">Submit Your Review</h2>
+                                <!-- Form already included above -->
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <div class="container my-5">
+                                <h2 class="mb-4 text-center">Customer Reviews</h2>
+                                @foreach ($reviews as $review)
+                                    <div class="mb-4">
+                                        <div class="d-flex align-items-center">
+                                            <i class="fa-solid fa-circle-user"></i>
+                                            
+                                            <h5>{{ $review->name }}</h5>
+                                        </div>
+                                        <p><strong>Subject:</strong> {{ $review->subject }}</p>
+                                        <p>{{ $review->message }}</p>
+                                        <hr>
+                                    </div>
+                                @endforeach
+                                <!-- روابط التنقل بين الصفحات -->
+                                <div class="pagination-wrapper">
+                                    {{ $reviews->links('pagination::bootstrap-4') }}
+                                </div>
 
-        <!-- Review Section End -->
-        <!-- Call Section Start -->
-        <div id="call-us">
-            <div class="container">
-                <div class="section-header">
-                    <h2>Click Below to Call Us</h2>
-                    <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in mi libero. Quisque
-                        convallis,
-                        enim at venenatis tincidunt.
-                    </p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#reviewCarousel"
+                        data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#reviewCarousel"
+                        data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
                 </div>
-                <div class="row">
-                    <div class="col-12">
-                        @foreach ($hotels as $hotel)
-                            @if ($hotel->id == 2)
-                                <a href="tel:+{{ $hotel->phone }}">{{ $hotel->phone }}</a>
-                            @endif
-                        @endforeach
+
+                <!-- Review Section End -->
+                <!-- Call Section Start -->
+                <div id="call-us">
+                    <div class="container">
+                        <div class="section-header">
+                            <h2>Click Below to Call Us</h2>
+                            <p>
+                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in mi libero. Quisque
+                                convallis,
+                                enim at venenatis tincidunt.
+                            </p>
+                        </div>
+                        <div class="row">
+                            <div class="col-12">
+                                @foreach ($hotels as $hotel)
+                                    @if ($hotel->id == 2)
+                                        <a href="tel:+{{ $hotel->phone }}">{{ $hotel->phone }}</a>
+                                    @endif
+                                @endforeach
+                            </div>
+                        </div>
+
                     </div>
                 </div>
-
-            </div>
-        </div>
-        <!-- Call Section End -->
+                <!-- Call Section End -->
 
 
-        <!-- Footer Section End -->
+                <!-- Footer Section End -->
 
-        <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
+                <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
 
 
 
-        <!-- Booking Javascript File -->
-        <script src="{{ asset('js/booking.js') }}"></script>
-        <script src="{{ asset('js/jqBootstrapValidation.min.js') }}"></script>
+                <!-- Booking Javascript File -->
+                <script src="{{ asset('js/booking.js') }}"></script>
+                <script src="{{ asset('js/jqBootstrapValidation.min.js') }}"></script>
 
-        <!-- Main Javascript File -->
-        <script src="{{ asset('js/main.js') }}"></script>
+                <!-- Main Javascript File -->
+                <script src="{{ asset('js/main.js') }}"></script>
+                <!-- Bootstrap JS and Popper.js (required for Bootstrap components like the carousel) -->
+                <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+                <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+
+
     </body>
 
     </html>
-
-
-
-
 @endsection

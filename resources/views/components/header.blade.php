@@ -1,4 +1,7 @@
 <head>
+    <!-- Bootstrap CSS -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
     <style>
         /* عام: إعدادات Reset */
         * {
@@ -63,7 +66,7 @@
             cursor: pointer;
             box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            
+
         }
 
         #dropdownCustomerButton:hover,
@@ -152,7 +155,7 @@
             <li class="active"><a href="{{ route('home.index') }}">Home</a></li>
             <li><a href="{{ route('about_us') }}">About Us</a></li>
             <li><a href="{{ route('room.index') }}">Rooms</a></li>
-            <li><a href="amenities.html">Amenities</a></li>
+            <li><a href="{{ route('review') }}">Reviews</a></li>
             <li><a href="{{ route('booking.create') }}">Booking</a></li>
             <li>
                 @if (Auth::guard('guest-hotel')->check())

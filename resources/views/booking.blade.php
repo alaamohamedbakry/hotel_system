@@ -1,9 +1,6 @@
 @extends('layouts.master')
 @section('content')
-
     <body>
-
-
         <!-- Search Section Start -->
         <div id="search" style="background: #f2f2f2;">
             <div class="container">
