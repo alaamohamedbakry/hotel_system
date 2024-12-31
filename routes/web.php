@@ -87,4 +87,9 @@ Route::patch('/rooms/{id}/status', [RoomController::class, 'updateStatus'])->nam
 Route::get('/Addroomimages/{roomid}', [RoomController::class, 'addroomimages'])->name('addroomimage');
 Route::post('/storeroomimage', [RoomController::class, 'storeroomimage'])->name('storeroomimage');
 Route::delete('/removephotos/{roomphoto}', [RoomController::class, 'removeroomphotos'])->name('removeroomphotos');
+Route::get('/mail-inbox',[DashboardController::class,'inbox'])->name('inbox');
+Route::get('/send_email/{id}',[DashboardController::class,'send_email'])->name('send_email');
+Route::post('/mail/{id}', [DashboardController::class, 'mail'])->name('mail');
+
+
 require __DIR__ . '/auth.php';

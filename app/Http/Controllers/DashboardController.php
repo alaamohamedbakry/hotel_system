@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Guest;
 use App\Models\Hotel;
+use App\Models\Review;
 use App\Models\Room;
 use App\Models\Staff;
+use App\Notifications\GuestsNotifications;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Notifications\Notification;
 use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
@@ -112,6 +115,31 @@ class DashboardController extends Controller
         $total_hotels=Hotel::count();
         return response()->json(['data'=>$total_hotels]);
     }
+    public function inbox(){
+        $reviews=Review::all();
+        return view('admin.inbox',compact('reviews'));
+    }
+    public function send_email($id){
+        $review=Review::find($id);
+        return view('admin.send_email',compact('review'));
+    }
 
+    public function mail(Request $request, $id)
+    {
+        $review = Review::findOrFail($id); // استخدم findOrFail لضمان العثور على السجل
+        $details = [
+            'greeting' => $request->greeting,
+            'mail_body' => $request->mail_body,
+            'action_text' => $request->action_text,
+            'action_url' => $request->action_url,
+            'end_line' => $request->end_line
+        ];
+    
+        // إرسال الإشعار
+        $review->notify(new GuestsNotifications($details));
+    
+        return redirect()->route('inbox')->with('msg', 'Email Sent Successfully');
+    }
+    
 
 }
