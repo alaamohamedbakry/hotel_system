@@ -9,6 +9,7 @@ use App\Models\Review;
 use App\Models\Room;
 use App\Models\Staff;
 use App\Notifications\GuestsNotifications;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Notifications\Notification;
@@ -119,14 +120,16 @@ class DashboardController extends Controller
         $reviews=Review::all();
         return view('admin.inbox',compact('reviews'));
     }
-    public function send_email($id){
-        $review=Review::find($id);
-        return view('admin.send_email',compact('review'));
+    public function send_email($id)
+    {
+        $review = Review::find($id);
+        return view('admin.send_email', compact('review'));
     }
+    
 
     public function mail(Request $request, $id)
     {
-        $review = Review::findOrFail($id); // استخدم findOrFail لضمان العثور على السجل
+        $review = Review::findOrFail($id);
         $details = [
             'greeting' => $request->greeting,
             'mail_body' => $request->mail_body,
@@ -134,12 +137,34 @@ class DashboardController extends Controller
             'action_url' => $request->action_url,
             'end_line' => $request->end_line
         ];
-    
+
         // إرسال الإشعار
         $review->notify(new GuestsNotifications($details));
-    
+
         return redirect()->route('inbox')->with('msg', 'Email Sent Successfully');
     }
-    
+    public function notifications(){
+        $registrations = Guest::whereDate('created_at', Carbon::today())->count();
+        $bookings = Booking::whereDate('created_at', Carbon::today())->count();
+        $booking_count= Booking::count();
+        $guest_count= Guest::count();
+        $ms= $booking_count + $guest_count;
 
+        return view('admin.dashboard', compact('registrations', 'bookings','ms'));
+    }
+     public function messages() {
+            // استرجاع آخر 5 مراجعات
+            $messages_reviews = Review::latest()->take(5)->get();
+        
+            // تحقق من المراجعات قبل تمريرها إلى الـ View
+            dd($messages_reviews); // هذا سيطبع المتغير ويساعدك في تحديد إذا كان فارغًا أو لا
+        
+            return view('admin.dashboard', compact('messages_reviews'));
+    }
+        
+    public function show_tables() {
+        $guests = Guest::latest()->get();
+        return view('admin.tables.guests',compact('guests'));
+
+    }
 }

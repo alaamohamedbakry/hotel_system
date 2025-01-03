@@ -78,33 +78,41 @@
                             </form>
                         </li>
 
-                        <!-- Messages Dropdown -->
-                        <li class="nav-item dropdown ms-2">
-                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="far fa-comments"></i>
-                                <span class="badge bg-danger">3</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
-                                <li><a class="dropdown-item" href="#">Message 1</a></li>
-                                <li><a class="dropdown-item" href="#">Message 2</a></li>
-                                <li><a class="dropdown-item" href="#">Message 3</a></li>
-                            </ul>
-                        </li>
+                 <!-- Messages Dropdown -->
+<li class="nav-item dropdown ms-2">
+    <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+       data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="far fa-comments"></i>
+        <span class="badge bg-danger">{{ $messages_reviews_count }}</span> <!-- عرض عدد المراجعات -->
+    </a>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
+        @if($messages_reviews->count() > 0) <!-- تحقق إذا كانت هناك مراجعات -->
+            @foreach($messages_reviews as $review)
+                <li><a class="dropdown-item" href="#">{{ $review->name }}:{{ $review->message }}</a></li> <!-- عرض الرسالة -->
+            @endforeach
+        @else
+            <li><a class="dropdown-item" href="#">No messages</a></li>
+        @endif
+    </ul>
+</li>
+
+
 
                         <!-- Notifications Dropdown -->
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
                                 <i class="far fa-bell"></i>
-                                <span class="badge bg-warning">15</span>
+                                <span class="badge bg-warning">{{ $ms }}</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-                                <li><a class="dropdown-item" href="#">4 new messages</a></li>
-                                <li><a class="dropdown-item" href="#">8 friend requests</a></li>
-                                <li><a class="dropdown-item" href="#">3 new reports</a></li>
+                                <li><a class="dropdown-item" href="{{ route('guests.show.tables') }}">New Guests: {{ $registrations }}</a></li>
+                                <li><a class="dropdown-item" href="{{ route('booking.index') }}">New Bookings Today:
+                                        {{ $bookings }}</a></li>
                             </ul>
                         </li>
+
+
 
                         <!-- User Dropdown -->
                         <li class="nav-item dropdown ms-2">
@@ -202,7 +210,7 @@
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Room type form</p>
                                     </a>
-                                    <a href="{{route('rooms.create')}}" class="nav-link">
+                                    <a href="{{ route('rooms.create') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Room form</p>
                                     </a>
@@ -243,6 +251,10 @@
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>booking index</p>
                                     </a>
+                                    <a href="{{route('guests.show.tables')}}" class="nav-link">
+                                        <i class="far fa-circle nav-icon"></i>
+                                        <p>Guest Tables</p>
+                                    </a>
                                 </li>
                             </ul>
                         </li>
@@ -282,7 +294,7 @@
                             </a>
                             <ul class="nav nav-treeview">
                                 <li class="nav-item">
-                                    <a href="{{route('inbox')}}" class="nav-link">
+                                    <a href="{{ route('inbox') }}" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Inbox</p>
                                     </a>
@@ -308,48 +320,6 @@
                                     <a href="pages/examples/profile.html" class="nav-link">
                                         <i class="far fa-circle nav-icon"></i>
                                         <p>Profile</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/e-commerce.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>E-commerce</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/projects.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Projects</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/project-add.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Project Add</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/project-edit.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Project Edit</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/project-detail.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Project Detail</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/contacts.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Contacts</p>
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a href="pages/examples/faq.html" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>FAQ</p>
                                     </a>
                                 </li>
                                 <li class="nav-item">
@@ -618,7 +588,7 @@
 
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
-  <!-- Content Header (Page header) -->
+            <!-- Content Header (Page header) -->
 
 
 
@@ -700,8 +670,8 @@
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
         <!-- jquery js-->
         <script src="//cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
-          <!-- jquery css-->
-          <link href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
+        <!-- jquery css-->
+        <link href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.min.css">
         @stack('scripts')
 </body>
 <style>

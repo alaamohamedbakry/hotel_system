@@ -70,7 +70,9 @@ Route::prefix('booking')->group(function () {
   Route::get('/show/{id}',[BookingController::class,'show'])->name('booking.show');
 
 });
-Route::post('/mail/booking', [BookingController::class, 'sendBookingEmail']);
+Route::prefix('guest')->group(function () {
+    Route::get('/show_tables', [DashboardController::class, 'show_tables'])->name('guests.show.tables');
+});
 Route::get('/admin/booking/avilable-rooms/{checkindate}', [BookingController::class, 'avilable_rooms']);
 Route::get('/index-dashboarrd', [DashboardController::class, 'admin_index'])->name('admin_index');
 
@@ -90,6 +92,8 @@ Route::delete('/removephotos/{roomphoto}', [RoomController::class, 'removeroomph
 Route::get('/mail-inbox',[DashboardController::class,'inbox'])->name('inbox');
 Route::get('/send_email/{id}',[DashboardController::class,'send_email'])->name('send_email');
 Route::post('/mail/{id}', [DashboardController::class, 'mail'])->name('mail');
+Route::get('/notificataions',[DashboardController::class,'notifications'])->name('notifications');
+Route::get('/messages',[DashboardController::class,'messages'])->name('messages');
 
 
 require __DIR__ . '/auth.php';

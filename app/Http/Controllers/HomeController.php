@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Booking;
+use App\Models\Guest;
 use App\Models\Hotel;
 use App\Models\Review;
 use App\Models\Room;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 
@@ -119,5 +122,13 @@ class HomeController extends Controller
         $hotels= Hotel::all();
         return view('about',compact("hotels"));
     }
+
+    public function notifications(){
+        $registrations = Guest::whereDate('created_at', Carbon::today())->count(); // عدد المسجلين اليوم
+        $bookings = Booking::whereDate('created_at', Carbon::today())->count(); // عدد الحجوزات اليوم
+
+        return view('admin.dashboard', compact('registrations', 'bookings'));
+     }
+
     
 }
