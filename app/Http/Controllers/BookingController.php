@@ -9,6 +9,7 @@ use App\Models\Booking;
 use App\Models\Guest;
 use App\Models\Room;
 use App\Models\Roomtype;
+use App\Notifications\BookingCreated;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,13 +90,9 @@ class BookingController extends Controller
                 'guest_id' => $guest->id, // ID الضيف المسجل دخول
             ]);
 
-            // إرسال البريد الإلكتروني
-            try {
-                Mail::to($guest->email)->send(new BookingConfirmation($booking));
-                $emailStatus = 'Email sent successfully.';
-            } catch (Exception $e) {
-                $emailStatus = 'Failed to send email: ' . $e->getMessage();
-            }
+            // إرسال الإشعار عبر البريد الإلكتروني
+                $guest = $booking->guest;  // إذا كان الحجز مرتبطًا بـ guest
+                $guest->notify(new BookingCreated($booking));
             return to_route('home.index')->with('msg', 'Booking created successfully and email sent.');
         } catch (Exception $e) {
             return to_route('home.index')->with('msg', 'Failed to create booking: ' . $e->getMessage());

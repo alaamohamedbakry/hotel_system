@@ -11,6 +11,7 @@ namespace App\Models;
 
 class Guest extends Authenticatable
 {
+   
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'guests';
     protected $fillable = [
@@ -42,7 +43,7 @@ class Guest extends Authenticatable
     ];
 
 
-    public function booking(){
+    public function bookings(){
         $this->hasMany(booking::class);
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Review;
 use App\Models\Room;
 use App\Models\Staff;
 use App\Notifications\GuestsNotifications;
+use App\Notifications\UsersNotifications;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -17,6 +18,12 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    public function login_admin(){
+        return view('admin.login');
+    }
+    public function register_admin(){
+        return view('admin.register');
+    }
     public function index()
     {
         return view('admin.dashboard');
@@ -166,5 +173,26 @@ class DashboardController extends Controller
         $guests = Guest::latest()->get();
         return view('admin.tables.guests',compact('guests'));
 
+    }
+
+    public function email_sending($id) {
+        $guest = Guest::find($id);
+        return view('admin.send_email_guests', compact('guest'));
+    }
+
+    public function mailing(Request $request, $id) {
+        $guest = Guest::findOrFail($id);
+        $messages = [
+            'greeting' => $request->greeting,
+            'mail_body' => $request->mail_body,
+            'action_text' => $request->action_text,
+            'action_url' => $request->action_url,
+            'end_line' => $request->end_line
+        ];
+
+        // إرسال الإشعار
+        $guest->notify(new UsersNotifications($messages));
+
+        return redirect()->route('guests.show.tables')->with('msg', 'Email Sent Successfully');
     }
 }

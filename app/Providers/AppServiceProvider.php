@@ -29,7 +29,7 @@ class AppServiceProvider extends ServiceProvider
         $messages_reviews = Review::latest()->take(5)->get();
         $messages_reviews_count = Review::count();
             $ms = $bookings + $registrations;
-    
+
         // تمرير البيانات لكل الـ Views
         View::share('registrations', $registrations);
         View::share('bookings', $bookings);

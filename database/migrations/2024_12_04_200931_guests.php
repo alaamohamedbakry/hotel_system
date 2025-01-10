@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
             $table->string('FirstName')->notNull(); // التعديل هنا
-            $table->string('LastName')->notNull();
+            $table->string('LastName')->notNull(); // التعديل هنا
             $table->date('DateOfBirth');
             $table->string('Address');
             $table->string('Phone');

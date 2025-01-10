@@ -21,6 +21,7 @@
                 <th scope="col">Date_of_birth</th>
                 <th scope="col">Phone</th>
                 <th scope="col">Email</th>
+                 <th scope="col">Send-Email</th>
                 <th scope="col">Edit</th>
                 <th scope="col">Delete</th>
             </tr>
@@ -35,6 +36,8 @@
                     <td>{{ $guest->DateOfBirth }}</td>
                     <td>{{ $guest->Phone }}</td>
                     <td>{{ $guest->email }}</td>
+                    <td><a class="btn btn-success" href="{{ route('send_email_guests',$guest->id) }}">
+                        <i class="fa-solid fa-inbox" style="color:black;"></i> Send Email</a></td>
                     <td class="action-buttons">
                         <a href="">
                             <i class="fa-solid fa-user-pen"></i>

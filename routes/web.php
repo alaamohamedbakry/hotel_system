@@ -20,11 +20,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth.login');
 });
 
 Route::get('/dashboard', function () {
-    return view('dashboard');
+    return view('admin.dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
@@ -33,13 +33,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 Route::get('/admin/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
+Route::get('/admin/login', [DashboardController::class, 'login_admin'])->name('admin.login');
+Route::get('/admin/register', [DashboardController::class, 'register_admin'])->name('admin.register');
 
 Route::prefix('roomtype')->group(function () {
     Route::get('/index', [RoomTypeController::class, 'index'])->name('roomtype.index');
     Route::get('/create', [RoomTypeController::class, 'create'])->name('roomtype.create');
     Route::post('/store', [RoomTypeController::class, 'store'])->name('roomtype.store');
-    Route::get('/edit/{roomtype}',[RoomTypeController::class,'edit'])->name('roomtype.edit');
-    Route::put('update/{roomtype}',[RoomTypeController::class,'update'])->name('roomtype.update');
+    Route::get('/edit/{roomtype}', [RoomTypeController::class, 'edit'])->name('roomtype.edit');
+    Route::put('update/{roomtype}', [RoomTypeController::class, 'update'])->name('roomtype.update');
     Route::delete('/delete/{id}', [RoomTypeController::class, 'destroy'])->name('roomtype.destroy');
 });
 
@@ -61,17 +63,18 @@ Route::prefix('room')->group(function () {
     Route::delete('/rooms/{room}', [RoomController::class, 'destroy'])->name('rooms.destroy');
 });
 Route::prefix('booking')->group(function () {
-  Route::get('/index/booking', [BookingController::class, 'index'])->name('booking.index');
-  Route::get('/create/admin', [BookingController::class, 'admin_create'])->name('booking_admin.create');
-  Route::post('/store/admin', [BookingController::class, 'admin_store'])->name('booking_admin.store');
-  Route::get('/edit/{booking}',[BookingController::class,'edit'])->name('booking.edit');
-  Route::put('/update/{booking}',[BookingController::class,'update'])->name('booking.update');
-  Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->name('booking.destroy');
-  Route::get('/show/{id}',[BookingController::class,'show'])->name('booking.show');
-
+    Route::get('/index/booking', [BookingController::class, 'index'])->name('booking.index');
+    Route::get('/create/admin', [BookingController::class, 'admin_create'])->name('booking_admin.create');
+    Route::post('/store/admin', [BookingController::class, 'admin_store'])->name('booking_admin.store');
+    Route::get('/edit/{booking}', [BookingController::class, 'edit'])->name('booking.edit');
+    Route::put('/update/{booking}', [BookingController::class, 'update'])->name('booking.update');
+    Route::delete('/booking/{booking}', [BookingController::class, 'destroy'])->name('booking.destroy');
+    Route::get('/show/{id}', [BookingController::class, 'show'])->name('booking.show');
 });
 Route::prefix('guest')->group(function () {
     Route::get('/show_tables', [DashboardController::class, 'show_tables'])->name('guests.show.tables');
+    Route::get('/sendemail/{id}', [DashboardController::class, 'email_sending'])->name('send_email_guests');
+    Route::post('/mail/{id}', [DashboardController::class, 'mailing'])->name('mailing');
 });
 Route::get('/admin/booking/avilable-rooms/{checkindate}', [BookingController::class, 'avilable_rooms']);
 Route::get('/index-dashboarrd', [DashboardController::class, 'admin_index'])->name('admin_index');
@@ -89,11 +92,11 @@ Route::patch('/rooms/{id}/status', [RoomController::class, 'updateStatus'])->nam
 Route::get('/Addroomimages/{roomid}', [RoomController::class, 'addroomimages'])->name('addroomimage');
 Route::post('/storeroomimage', [RoomController::class, 'storeroomimage'])->name('storeroomimage');
 Route::delete('/removephotos/{roomphoto}', [RoomController::class, 'removeroomphotos'])->name('removeroomphotos');
-Route::get('/mail-inbox',[DashboardController::class,'inbox'])->name('inbox');
-Route::get('/send_email/{id}',[DashboardController::class,'send_email'])->name('send_email');
+Route::get('/mail-inbox', [DashboardController::class, 'inbox'])->name('inbox');
+Route::get('/send_email/{id}', [DashboardController::class, 'send_email'])->name('send_email');
 Route::post('/mail/{id}', [DashboardController::class, 'mail'])->name('mail');
-Route::get('/notificataions',[DashboardController::class,'notifications'])->name('notifications');
-Route::get('/messages',[DashboardController::class,'messages'])->name('messages');
+Route::get('/notificataions', [DashboardController::class, 'notifications'])->name('notifications');
+Route::get('/messages', [DashboardController::class, 'messages'])->name('messages');
 
 
 require __DIR__ . '/auth.php';

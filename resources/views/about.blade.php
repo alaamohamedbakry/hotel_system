@@ -1,78 +1,115 @@
 @extends('layouts.master')
 @section('content')
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
-        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - Hotel</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        .header {
+            background-image:url('photos/about/about-1.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 3rem;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .section {
+            display: flex;
+            align-items: center;
+            margin-bottom: 40px;
+        }
+        .section img {
+            width: 200px;
+            height: auto;
+            border-radius: 8px;
+            margin-right: 20px;
+        }
+        .section h2 {
+            margin-top: 0;
+            font-size: 2rem;
+            color: #333;
+        }
+        .section p {
+            line-height: 1.6;
+            color: #555;
+        }
+    </style>
 </head>
 <body>
-    <!-- About Section Start -->
-    <div id="about">
-        <div class="container">
-            <div class="section-header">
-                <h2>About Royal Hotel</h2>
-                <p>We have a lot of hotels in different places</p>
-            </div>    
-        </div>
-        <h2 class="text-center">Hotel Places</h2>
-        <table class="table table-striped table-hover" id="HotelTable">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Name</th>
-                    <th>Address</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                    <th>Star</th>
-                    <th>Check-In Date</th>
-                    <th>Check-Out Date</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse ($hotels as $hotel)
-                    <tr>
-                        <td>{{ $loop->iteration }}</td>
-                        <td>{{ $hotel->name }}</td>
-                        <td>{{ $hotel->address }}</td>
-                        <td>{{ $hotel->phone }}</td>
-                        <td>{{ $hotel->email }}</td>
-                        <td>{{ $hotel->star }}</td>
-                        <td>{{ $hotel->checkin }}</td>
-                        <td>{{ $hotel->checkout }}</td>
-                    </tr>
-                @empty
-                    <tr>
-                        <td colspan="12" class="text-center">No data found</td>
-                    </tr>
-                @endforelse
-            </tbody>
-        </table>
+    <div class="header">
+        <h1>Welcome to Our Hotel</h1>
     </div>
-    <!-- About Section End -->
-    <div id="call-us">
-        <div class="container">
-            <div class="section-header">
-                <h2>Click Below to Call Us</h2>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Maecenas in mi libero. Quisque convallis, enim at venenatis tincidunt.</p>
+
+    <div class="container">
+        <div class="section">
+            <img src="{{asset('photos/about/OIP (1).jpeg')}}" alt="Hotel Exterior">
+            <div>
+                <h2>About Us</h2>
+                <p>
+                    Nestled in the heart of the city, our hotel offers the perfect blend of luxury and comfort. 
+                    Established in 2000, we pride ourselves on providing world-class hospitality to our guests. 
+                    Whether you're here for business or leisure, we ensure an unforgettable experience.
+                </p>
             </div>
-            <div class="row">
-                <div class="col-12">
-                    <a href="tel:+12345678900">+1 234 567 8900</a>
-                </div>
+        </div>
+
+        <div class="section">
+            <img src="{{ asset('photos/about/5-Luxury-Hotels-that-Have-the-Most-Sumptuous-Bedroom-Suites-7-768x512.jpg') }}" alt="Luxury Room">
+            <div>
+                <h2>Our Rooms</h2>
+                <p>
+                    Our rooms are designed with elegance and equipped with modern amenities to make your stay comfortable. 
+                    From cozy single rooms to luxurious suites, we have accommodations that suit every need.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <img src="{{asset('photos/about/OIP (4).jpeg')}}" alt="Fine Dining">
+            <div>
+                <h2>Dining Experience</h2>
+                <p>
+                    Indulge in a gastronomic journey with our in-house restaurants offering a variety of cuisines. 
+                    Enjoy fine dining in a serene ambiance, crafted by our expert chefs.
+                </p>
+            </div>
+        </div>
+
+        <div class="section">
+            <img src="{{ asset('photos/about/OIF.jpeg') }}" alt="Spa and Wellness">
+            <div>
+                <h2>Relax and Rejuvenate</h2>
+                <p>
+                    Take a break from the hustle and bustle and unwind at our spa and wellness center. 
+                    From massages to yoga sessions, we have everything to help you relax.
+                </p>
             </div>
         </div>
     </div>
-    <!-- Call Section End -->
-
-    <a href="#" class="back-to-top"><i class="fa fa-chevron-up"></i></a>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-    <script>
-        $(document).ready(function() {
-            $('#HotelTable').DataTable();
-        });
-    </script>
 </body>
+</html>
+
 @endsection
