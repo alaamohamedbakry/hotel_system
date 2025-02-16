@@ -125,7 +125,7 @@
             <div class="card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                <form method="POST" action="{{ route('login') }}">
+                <form method="POST" action="{{ route('staff_login_submit') }}">
                     @csrf
                     <div class="mb-3 input-group">
                         <input type="email" name="email" class="form-control" placeholder="Email" required>
@@ -176,14 +176,8 @@
                 @endif
                 </p>
                 <p class="mb-1">
-                    <a href="{{ route('register') }}" class="text-center">Register a new membership</a>
-                </p>
-                <p class="mb-1">
                     <a href="{{route('staff.register.form')}}" class="text-center">Register a new StaffMember</a>
                 </p>
-                <a href="{{route('staff_login')}}" class="btn btn-block btn-primary">
-                     Sign in as a staff
-                </a>
             </div>
             <!-- /.card-body -->
         </div>

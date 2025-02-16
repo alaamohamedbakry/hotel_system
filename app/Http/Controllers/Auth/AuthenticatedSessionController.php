@@ -12,6 +12,7 @@ use Illuminate\View\View;
 
 class AuthenticatedSessionController extends Controller
 {
+    
     /**
      * Display the login view.
      */
@@ -29,7 +30,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $user = Auth::user(); // جلب بيانات المستخدم
+
+        // التوجيه بناءً على البريد الإلكتروني
+        if ($user->email === 'alaa@mail.com') {
+            return redirect()->route('admin.dashboard'); // توجيه إلى لوحة الإدارة
+        }
+
+        return redirect()->route('home.index'); // توجيه إلى الصفحة الرئيسية
     }
 
     /**

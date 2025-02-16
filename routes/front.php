@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
-Route::get('/home', [HomeController::class, 'index'])->name('home.index');
+Route::get('/', [HomeController::class, 'index'])->name('home.index');
 Route::get('/index',[RoomController::class,'index'])->name('room.index');
 Route::get('/create', [BookingController::class, 'create'])->middleware('guest-hotel')->name('booking.create');
 Route::post('/store', [BookingController::class, 'store'])->name('booking.store');
@@ -35,6 +35,5 @@ Route::prefix('guest')->group(function () {
 });
 Route::get('review', [ReviewController::class, 'review'])->name('review');
 Route::post('storereview', [ReviewController::class, 'storereview'])->name('storereview');
-Route::get('room',[RoomController::class,'index'])->name('room.index');
 Route::get('/get-room-details/{room_id}', [RoomController::class, 'getRoomDetails'])->name('getroomdetails');
 Route::get('/about-us',[HomeController::class,'about_us'])->name('about_us');

@@ -57,13 +57,12 @@
                     <!-- Left Links -->
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ route('admin_index') }}">Home</a>
+                            @if (auth('web')->check())
+                                <a class="nav-link active" href="{{ route('admin_index') }}">Home</a>
+                            @endif
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#">Contact</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#">Staff</a>
                         </li>
                     </ul>
 
@@ -78,38 +77,47 @@
                             </form>
                         </li>
 
-                 <!-- Messages Dropdown -->
-<li class="nav-item dropdown ms-2">
-    <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
-       data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="far fa-comments"></i>
-        <span class="badge bg-danger">{{ $messages_reviews_count }}</span> <!-- عرض عدد المراجعات -->
-    </a>
-    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
-        @if($messages_reviews->count() > 0) <!-- تحقق إذا كانت هناك مراجعات -->
-            @foreach($messages_reviews as $review)
-                <li><a class="dropdown-item" href="#">{{ $review->name }}:{{ $review->message }}</a></li> <!-- عرض الرسالة -->
-            @endforeach
-        @else
-            <li><a class="dropdown-item" href="#">No messages</a></li>
-        @endif
-    </ul>
-</li>
-
+                        <!-- Messages Dropdown -->
+                        <li class="nav-item dropdown ms-2">
+                            <a class="nav-link dropdown-toggle" href="#" id="messagesDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="far fa-comments"></i>
+                                <span class="badge bg-danger">{{ $messages_reviews_count }}</span>
+                                <!-- عرض عدد المراجعات -->
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="messagesDropdown">
+                                @if ($messages_reviews->count() > 0)
+                                    <!-- تحقق إذا كانت هناك مراجعات -->
+                                    @foreach ($messages_reviews as $review)
+                                        <li><a class="dropdown-item"
+                                                href="#">{{ $review->name }}:{{ $review->message }}</a></li>
+                                        <!-- عرض الرسالة -->
+                                    @endforeach
+                                @else
+                                    <li><a class="dropdown-item" href="#">No messages</a></li>
+                                @endif
+                            </ul>
+                        </li>
 
 
                         <!-- Notifications Dropdown -->
                         <li class="nav-item dropdown ms-2">
-                            <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown" role="button"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="far fa-bell"></i>
-                                <span class="badge bg-warning">{{ $ms }}</span>
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
-                                <li><a class="dropdown-item" href="{{ route('guests.show.tables') }}">New Guests: {{ $registrations }}</a></li>
-                                <li><a class="dropdown-item" href="{{ route('booking.index') }}">New Bookings Today:
-                                        {{ $bookings }}</a></li>
-                            </ul>
+                            @if (auth('web')->check())
+                                <a class="nav-link dropdown-toggle" href="#" id="notificationsDropdown"
+                                    role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="far fa-bell"></i>
+                                    @if ($ms > 0)
+                                        <span class="badge bg-warning">{{ $ms }}</span>
+                                    @endif
+                                </a>
+
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationsDropdown">
+                                    <li><a class="dropdown-item" href="{{ route('guests.show.tables') }}">New Guests:
+                                            {{ $registrations }}</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('booking.index') }}">New Bookings
+                                            Today: {{ $bookings }}</a></li>
+                                </ul>
+                            @endif
                         </li>
 
 
@@ -118,18 +126,48 @@
                         <li class="nav-item dropdown ms-2">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
                                 data-bs-toggle="dropdown" aria-expanded="false">
-                                <i class="fas fa-user-circle"></i> {{ Auth::user()->name }}
+                                <i class="fas fa-user-circle"></i>
+                                @if (Auth::guard('staff')->check())
+                                    <!-- Staff is logged in -->
+                                    {{ Auth::guard('staff')->user()->name }}
+                                @elseif(Auth::check())
+                                    <!-- Admin or other web user is logged in -->
+                                    {{ Auth::user()->name }}
+                                @else
+                                    Guest
+                                @endif
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
-                                <li>
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="dropdown-item">Log Out</button>
-                                    </form>
-                                </li>
+                                @if (Auth::guard('staff')->check())
+                                    <!-- This is the Staff -->
+                                    <li><a class="dropdown-item" href="{{ route('staff.dashboard') }}">Staff
+                                            Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('staff.profile.edit') }}">Profile</a>
+                                    </li>
+                                    <li>
+                                        <!-- Staff logout link with GET method -->
+                                        <a href="{{ route('staff.logout') }}" class="dropdown-item">Log Out</a>
+                                    </li>
+                                @elseif(Auth::check())
+                                    <!-- This is the Admin -->
+                                    <li><a class="dropdown-item" href="{{ route('admin.dashboard') }}">Admin
+                                            Dashboard</a></li>
+                                    <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+                                    <li>
+                                        <!-- Admin logout form using POST -->
+                                        <form method="POST" action="{{ route('logout') }}">
+                                            @csrf
+                                            <button type="submit" class="dropdown-item">Log Out</button>
+                                        </form>
+                                    </li>
+                                @else
+                                    <!-- Guest -->
+                                    <p>You are not logged in</p>
+                                @endif
                             </ul>
                         </li>
+
+
                     </ul>
                 </div>
             </div>
@@ -156,7 +194,17 @@
                             alt="User Image">
                     </div>
                     <div class="info">
-                        <a href="#" class="d-block">Alexander Pierce</a>
+                        @if ($authUser)
+                            <a href="#" class="d-block">
+                                @if ($authUser)
+                                    {{ isset($authUser->First_name) ? trim(($authUser->First_name ?? '') . ' ' . ($authUser->Last_name ?? '')) : $authUser->name }}
+                                @else
+                                    Guest
+                                @endif
+                            </a>
+                        @else
+                            <a href="#" class="d-block">Guest</a>
+                        @endif
                     </div>
                 </div>
 
@@ -181,9 +229,9 @@
                with font-awesome or any other icon font library -->
                         <li class="nav-item menu-open">
                             <a href="#" class="nav-link active">
-                                <i class="nav-icon fas fa-tachometer-alt"></i>
+                                <i class="nav-icon fas fa-hotel"></i>
                                 <p>
-                                    Dashboard
+                                    {{ __('HotelManagementSystem') }}
                                     <i class="right fas fa-angle-left"></i>
                                 </p>
                             </a>
@@ -191,11 +239,10 @@
                                 <li class="nav-item">
                                     <a href="{{ route('admin_index') }}" class="nav-link active">
                                         <i class="far fa-circle nav-icon"></i>
-                                        <p>Dashboard v1</p>
+                                        <p>Dashboard </p>
                                     </a>
                                 </li>
                             </ul>
-                        </li>
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-edit"></i>
@@ -205,26 +252,46 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('roomtype.create') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Room type form</p>
-                                    </a>
-                                    <a href="{{ route('rooms.create') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Room form</p>
-                                    </a>
-                                    <a href="{{ route('hotel.create') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>hotel form</p>
-                                    </a>
-                                    <a href="{{ route('booking_admin.create') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Booking form</p>
-                                    </a>
-                                </li>
+                                @if (auth('web')->check())
+                                    <li class="nav-item">
+                                        <a href="{{ route('roomtype.create') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Room type form</p>
+                                        </a>
+                                        <a href="{{ route('rooms.create') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Room form</p>
+                                        </a>
+                                        <a href="{{ route('hotel.create') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Hotel form</p>
+                                        </a>
+                                        <a href="{{ route('roles.create') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Role form</p>
+                                        </a>
+                                        <a href="{{ route('staff.form') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Staff form</p>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                @if (auth('web')->check() || auth('staff')->check())
+                                    <li class="nav-item">
+                                        <a href="{{ route('booking_admin.create') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Booking form</p>
+                                        </a>
+                                        <a href="{{ route('guest.create') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>Guest form</p>
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
+
                         <li class="nav-item">
                             <a href="#" class="nav-link">
                                 <i class="nav-icon fas fa-table"></i>
@@ -234,30 +301,51 @@
                                 </p>
                             </a>
                             <ul class="nav nav-treeview">
-                                <li class="nav-item">
-                                    <a href="{{ route('rooms.show.tables') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>room Tables</p>
-                                    </a>
-                                    <a href="{{ route('hotel.show.tables') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>hotel Tables</p>
-                                    </a>
-                                    <a href="{{ route('roomtype.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>roomtype index</p>
-                                    </a>
-                                    <a href="{{ route('booking.index') }}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>booking index</p>
-                                    </a>
-                                    <a href="{{route('guests.show.tables')}}" class="nav-link">
-                                        <i class="far fa-circle nav-icon"></i>
-                                        <p>Guest Tables</p>
-                                    </a>
-                                </li>
+                                @if (auth('web')->check() || auth('staff')->check())
+                                    <li class="nav-item">
+                                        <a href="{{ route('rooms.show.tables') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('Room tables') }}</p>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                @if (auth('web')->check())
+                                    <li class="nav-item">
+                                        <a href="{{ route('hotel.show.tables') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('Hotel tables') }}</p>
+                                        </a>
+                                        <a href="{{ route('roomtype.index') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('RoomType Index') }}</p>
+                                        </a>
+                                        <a href="{{ route('roles.index') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('Roles tables') }}</p>
+                                        </a>
+                                        <a href="{{ route('staff.show_tables') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('Staff tables') }}</p>
+                                        </a>
+                                    </li>
+                                @endif
+
+                                @if (auth('web')->check() || auth('staff')->check())
+                                    <li class="nav-item">
+                                        <a href="{{ route('booking.index') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('Booking Tables') }}</p>
+                                        </a>
+                                        <a href="{{ route('guests.show.tables') }}" class="nav-link">
+                                            <i class="far fa-circle nav-icon"></i>
+                                            <p>{{ __('Guest tables') }}</p>
+                                        </a>
+                                    </li>
+                                @endif
                             </ul>
                         </li>
+
                         <li class="nav-header">EXAMPLES</li>
                         <li class="nav-item">
                             <a href="pages/calendar.html" class="nav-link">

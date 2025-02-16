@@ -17,10 +17,11 @@ class RoomController extends Controller
      */
     public function show_tables()
     {
-        $rooms= Room::all();
-        $hotel =Hotel::all();
-        $roomtype=Roomtype::all();
-        return view('admin.tables.room',compact("rooms","hotel","roomtype"));
+
+        $rooms = Room::all();
+        $hotel = Hotel::all();
+        $roomtype = Roomtype::all();
+        return view('admin.tables.room', compact("rooms", "hotel", "roomtype"));
     }
     public function index(Request $request)
     {
@@ -29,9 +30,9 @@ class RoomController extends Controller
 
         if ($request->has('search') && $request->search != '') {
             $rooms->where('room_number', 'like', '%' . $request->search . '%')
-                  ->orWhereHas('roomtype', function ($query) use ($request) {
-                      $query->where('name', 'like', '%' . $request->search . '%');
-                  });
+                ->orWhereHas('roomtype', function ($query) use ($request) {
+                    $query->where('name', 'like', '%' . $request->search . '%');
+                });
         }
 
         // الحصول على النتائج كـ Collection
@@ -58,18 +59,18 @@ class RoomController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'room_number'=>'required',
+            'room_number' => 'required',
             'status' => 'required|in:empty,busy,maintenance', // التحقق من الحالة
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'hotel_id'=>'required|numeric|exists:hotel,id',
-            'roomtypes_id'=>'required|numeric|exists:roomtypes,id'
+            'hotel_id' => 'required|numeric|exists:hotel,id',
+            'roomtypes_id' => 'required|numeric|exists:roomtypes,id'
         ]);
         try {
 
             Room::create([
                 'image' => $request->file('image')->store('room_image', 'public'),
                 'room_number' => $request->room_number,
-                 'status' => $request->status,
+                'status' => $request->status,
                 'description' => $request->description,
                 'hotel_id' => $request->hotel_id,
                 'roomtypes_id' => $request->roomtypes_id
@@ -85,10 +86,10 @@ class RoomController extends Controller
      */
     public function show(string $id)
     {
-        $hotel=Hotel::all();
-        $roomtype=Roomtype::all();
+        $hotel = Hotel::all();
+        $roomtype = Roomtype::all();
         $room = Room::findorfail($id);
-        return view('rooms.show',compact('hotel','roomtype')) ;
+        return view('rooms.show', compact('hotel', 'roomtype'));
     }
 
     /**
@@ -97,10 +98,9 @@ class RoomController extends Controller
     public function edit(string $id)
     {
         $room = Room::findOrFail($id);
-        $hotels=Hotel::all();
-        $roomtype=Roomtype::all();
-        return view('admin.rooms.edit',compact('hotels', 'roomtype', 'room'));
-
+        $hotels = Hotel::all();
+        $roomtype = Roomtype::all();
+        return view('admin.rooms.edit', compact('hotels', 'roomtype', 'room'));
     }
 
     /**
@@ -108,12 +108,13 @@ class RoomController extends Controller
      */
     public function update(Request $request, Room $room)
     {
+
         $request->validate([
-            'room_number'=>'required',
-            'status'=>'required',
+            'room_number' => 'required',
+            'status' => 'required',
             'image' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'hotel_id'=>'required|numeric|exists:hotel,id',
-            'roomtypes_id'=>'required|numeric|exists:roomtypes,id'
+            'hotel_id' => 'required|numeric|exists:hotel,id',
+            'roomtypes_id' => 'required|numeric|exists:roomtypes,id'
         ]);
         try {
             $room->update($request->except('_token', 'image'));
@@ -152,79 +153,77 @@ class RoomController extends Controller
 
 
     public function getRoomDetails($room_id)
-{
-    $room = Room::with('roomType')->find($room_id);
+    {
+        $room = Room::with('roomType')->find($room_id);
 
-    if ($room) {
-        return response()->json([
-            'name' => $room->roomType->name,
-            'price' => $room->roomType->pricepernight,
+        if ($room) {
+            return response()->json([
+                'name' => $room->roomType->name,
+                'price' => $room->roomType->pricepernight,
+            ]);
+        }
+
+        return response()->json(['error' => 'Room not found'], 404);
+    }
+    public function addroomimages(Request $request, $roomid)
+    {
+        $room = Room::findOrFail($roomid);
+
+        // الحصول على الصور المخزنة
+        $roomimages = Roomphoto::where('room_id', $room->id)->get();
+
+        return view('admin.rooms.addphotos', [
+            'roomimages' => $roomimages,
+            'room' => $room
         ]);
     }
-
-    return response()->json(['error' => 'Room not found'], 404);
-}
-public function addroomimages(Request $request, $roomid)
-{
-    $room = Room::findOrFail($roomid);
-
-    // الحصول على الصور المخزنة
-    $roomimages = Roomphoto::where('room_id', $room->id)->get();
-
-    return view('admin.rooms.addphotos', [
-        'roomimages' => $roomimages,
-        'room' => $room
-    ]);
-}
 
     public function removeroomphotos(Roomphoto $roomphoto)
-{
-    try {
-        if ($roomphoto->photopath) Storage::delete($roomphoto->photopath);
-        $roomphoto->delete();
-        return to_route('rooms.show.tables')->with('msg', 'productphoto deleted');
-    } catch (Exception $a) {
-        return to_route('rooms.show.tables')->with('msg', $a->getMessage());
+    {
+        try {
+            if ($roomphoto->photopath) Storage::delete($roomphoto->photopath);
+            $roomphoto->delete();
+            return to_route('rooms.show.tables')->with('msg', 'productphoto deleted');
+        } catch (Exception $a) {
+            return to_route('rooms.show.tables')->with('msg', $a->getMessage());
+        }
     }
-}
 
-public function storeroomimage(Request $request)
-{
-    $request->validate([
-        'image' => 'required|image',
-        'room_id' => 'required|numeric|exists:rooms,id'
-    ]);
-
-    try {
-        $photopath = $request->file('image')->store('room_image', 'public');
-
-        Roomphoto::create([
-            'photopath' => $photopath,
-            'room_id' => $request->room_id
+    public function storeroomimage(Request $request)
+    {
+        $request->validate([
+            'image' => 'required|image',
+            'room_id' => 'required|numeric|exists:rooms,id'
         ]);
 
-        // بعد حفظ الصورة بنجاح، نعيد التوجيه إلى الصفحة المناسبة
-        return redirect()->route('addroomimage', ['roomid' => $request->room_id])
-                         ->with('msg', 'Product added successfully.');
-    } catch (Exception $e) {
-        return redirect()->route('addroomimage', ['roomid' => $request->room_id])
-                         ->with('msg', $e->getMessage());
+        try {
+            $photopath = $request->file('image')->store('room_image', 'public');
+
+            Roomphoto::create([
+                'photopath' => $photopath,
+                'room_id' => $request->room_id
+            ]);
+
+            // بعد حفظ الصورة بنجاح، نعيد التوجيه إلى الصفحة المناسبة
+            return redirect()->route('addroomimage', ['roomid' => $request->room_id])
+                ->with('msg', 'Product added successfully.');
+        } catch (Exception $e) {
+            return redirect()->route('addroomimage', ['roomid' => $request->room_id])
+                ->with('msg', $e->getMessage());
+        }
     }
-}
 
 
-public function updateStatus(Request $request, $id)
-{
-    $room = Room::findOrFail($id);
+    public function updateStatus(Request $request, $id)
+    {
+        $room = Room::findOrFail($id);
 
-    $request->validate([
-        'status' => 'required|in:empty,busy,maintenance',
-    ]);
+        $request->validate([
+            'status' => 'required|in:empty,busy,maintenance',
+        ]);
 
-    $room->update(['status' => $request->status]);
+        $room->update(['status' => $request->status]);
 
-    return back()->with('msg', 'Room status updated successfully.');
-}
-
-
+        return back()->with('msg', 'Room status updated successfully.');
+    }
 }

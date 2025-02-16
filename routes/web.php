@@ -3,9 +3,14 @@
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
+use App\Http\Controllers\StaffController;
+use App\Http\Controllers\StaffProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,9 +24,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('auth.login');
-});
 
 Route::get('/dashboard', function () {
     return view('admin.dashboard');
@@ -75,7 +77,33 @@ Route::prefix('guest')->group(function () {
     Route::get('/show_tables', [DashboardController::class, 'show_tables'])->name('guests.show.tables');
     Route::get('/sendemail/{id}', [DashboardController::class, 'email_sending'])->name('send_email_guests');
     Route::post('/mail/{id}', [DashboardController::class, 'mailing'])->name('mailing');
+    Route::get('/create/guest', [DashboardController::class, 'create_guest'])->name('guest.create');
+    Route::post('/store/guest', [DashboardController::class, 'store_guest'])->name('guest.store');
+    Route::get('/edit/{guest}', [DashboardController::class, 'edit_guest'])->name('guest.edit');
+    Route::put('/update/{guest}', [DashboardController::class, 'update_guest'])->name('guest.update');
+    Route::delete('/delete/{guest}', [DashboardController::class, 'destroy'])->name('guest.destroy');
 });
+
+Route::prefix('staff')->group(function () {
+    Route::get('/show-tables', [StaffController::class, 'show_tables'])->name('staff.show_tables');
+    Route::get('/create/staff', [StaffController::class, 'createstaff'])->name('staff.form');
+    Route::post('/store/staff', [StaffController::class, 'storestaff'])->name('staff.store');
+    Route::get('/register', [StaffController::class, 'RegistrationForm'])->name('staff.register.form');
+    Route::post('/register', [StaffController::class, 'register'])->name('staff.register');
+    Route::get('/login-staff', [StaffController::class, 'login'])->name('staff_login');
+    Route::post('/login_submit', [StaffController::class, 'login_submit'])->name('staff_login_submit');
+    Route::get('staff/logout', [StaffController::class, 'logout'])->name('staff.logout');
+    Route::get('/dashboard-staff', [StaffController::class, 'dashboard'])->name('staff.dashboard');
+    Route::get('/edit/{staff}', [StaffController::class, 'edit'])->name('staff.edit');
+    Route::put('/update/{staff}', [StaffController::class, 'update'])->name('staff.update');
+    Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
+});
+Route::middleware(['auth:staff'])->group(function () {
+    Route::get('/staff/profile/edit', [StaffProfileController::class, 'edit'])->name('staff.profile.edit');
+    Route::put('/staff/profile/update', [StaffProfileController::class, 'update'])->name('staff.profile.update');
+});
+
+
 Route::get('/admin/booking/avilable-rooms/{checkindate}', [BookingController::class, 'avilable_rooms']);
 Route::get('/index-dashboarrd', [DashboardController::class, 'admin_index'])->name('admin_index');
 
@@ -99,4 +127,5 @@ Route::get('/notificataions', [DashboardController::class, 'notifications'])->na
 Route::get('/messages', [DashboardController::class, 'messages'])->name('messages');
 
 
+Route::resource('roles', RoleController::class)->except(['show']);
 require __DIR__ . '/auth.php';

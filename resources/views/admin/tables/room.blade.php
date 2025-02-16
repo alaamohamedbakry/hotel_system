@@ -6,18 +6,20 @@
     crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
         .room-image {
-            width: 60px; /* تحديد عرض الصورة */
-            height: 60px; /* تحديد ارتفاع الصورة */
-            object-fit: cover; /* لتناسب الصورة داخل الإطار */
-            border-radius: 5px; /* لجعل الزوايا دائرية قليلاً (اختياري) */
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 5px;
         }
     </style>
 </head>
+
 @if (session()->has('msg'))
 <div class="alert alert-success">
     {{ session('msg') }}
 </div>
 @endif
+
 <table class="table table-striped table-hover" id="RoomTable">
     <thead>
         <tr>
@@ -29,9 +31,12 @@
             <th scope="col">Roomtype</th>
             <th scope="col">Created_at</th>
             <th scope="col">Updated_at</th>
-            <th scope="col">add photos</th>
-            <th scope="col">Edit</th>
-            <th scope="col">Delete</th>
+
+            @if(auth('web')->check())
+                <th scope="col">add photos</th>
+                <th scope="col">Edit</th>
+                <th scope="col">Delete</th>
+            @endif
         </tr>
     </thead>
     <tbody>
@@ -49,22 +54,28 @@
                 <td>{{ $singleRoom->roomtype->name }}</td>
                 <td>{{ $singleRoom->created_at }}</td>
                 <td>{{ $singleRoom->updated_at }}</td>
-                <td><a href="{{route('addroomimage',$singleRoom->id)}}">
-                    <i class="fa-solid fa-plus" style="color:black;">  </a></td>
-                <td class="action-buttons">
-                    <a href="{{ route('rooms.edit', $singleRoom->id) }}">
-                        <i class="fa-solid fa-user-pen"></i>
-                    </a>
-                </td>
-                <td>
-                    <form method="post" action="{{ route('rooms.destroy', $singleRoom->id) }}">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" style="background:none;border:none;color:red;">
-                            <i class="fa-solid fa-trash"></i>
-                        </button>
-                    </form>
-                </td>
+
+                @if(auth('web')->check())
+                    <td>
+                        <a href="{{ route('addroomimage', $singleRoom->id) }}">
+                            <i class="fa-solid fa-plus" style="color:black;"></i>
+                        </a>
+                    </td>
+                    <td class="action-buttons">
+                        <a href="{{ route('rooms.edit', $singleRoom->id) }}">
+                            <i class="fa-solid fa-user-pen"></i>
+                        </a>
+                    </td>
+                    <td>
+                        <form method="post" action="{{ route('rooms.destroy', $singleRoom->id) }}">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" style="background:none;border:none;color:red;">
+                                <i class="fa-solid fa-trash"></i>
+                            </button>
+                        </form>
+                    </td>
+                @endif
             </tr>
         @empty
             <tr>
@@ -74,11 +85,10 @@
     </tbody>
 </table>
 
-
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"
 integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g=="
 crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script>
 $(document).ready(function() {
     $('#RoomTable').DataTable();

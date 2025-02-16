@@ -6,6 +6,7 @@ use App\Models\Booking;
 use App\Models\Guest;
 use App\Models\Review;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -36,5 +37,15 @@ class AppServiceProvider extends ServiceProvider
         View::share('messages_reviews_count', $messages_reviews_count);
         View::share('messages_reviews', $messages_reviews);
         view::share('ms',$ms);
+
+
+        View::composer('*', function ($view) {
+        // التحقق من أي Guard نشط حاليًا
+        $authUser = Auth::guard('staff')->check() ? Auth::guard('staff')->user() :
+                    (Auth::guard('web')->check() ? Auth::guard('web')->user() : null);
+
+        // إرسال المتغير إلى جميع الصفحات
+        $view->with('authUser', $authUser);
+    });
     }
 }

@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use PhpParser\Node\Expr\Cast\Bool_;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -25,6 +26,7 @@ class BookingController extends Controller
      */
     public function index()
     {
+        
         $bookings = Booking::all();
         $rooms = Room::all();
         $guests = Guest::all();
@@ -36,6 +38,7 @@ class BookingController extends Controller
      */
     public function admin_create()
     {
+        
         $guests = Guest::all();
         $rooms = Room::all();
         return view("admin.forms.booking", compact("guests", "rooms"));

@@ -211,7 +211,7 @@
                                     <div class="room-rate">
                                         <h3>From</h3>
                                         <h1>{{ $room->roomtype->pricepernight }}</h1>
-                                        <a href="#">Book Now</a>
+                                        <a href="{{ route('booking.create') }}">Book Now</a>
                                     </div>
                                 </div>
                             </div>
@@ -331,7 +331,7 @@
                                     <div class="mb-4">
                                         <div class="d-flex align-items-center">
                                             <i class="fa-solid fa-circle-user"></i>
-                                            
+
                                             <h5>{{ $review->name }}</h5>
                                         </div>
                                         <p><strong>Subject:</strong> {{ $review->subject }}</p>

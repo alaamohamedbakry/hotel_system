@@ -14,6 +14,10 @@ class Guest extends Authenticatable
    
     use HasApiTokens, HasFactory, Notifiable;
     protected $table = 'guests';
+    public function booking() {
+        return $this->hasMany(Booking::class);
+    }
+    
     protected $fillable = [
         'FirstName',
         'LastName',

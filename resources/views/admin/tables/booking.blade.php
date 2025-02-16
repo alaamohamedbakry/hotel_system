@@ -13,7 +13,9 @@
 
     </head>
     <div class="container mt-3">
-        <h2 class="text-center">Bookings Table</h2>
+        @can('manage-reservations')
+            <h2 class="text-center">Bookings Table</h2>
+        @endcan
         <table class="table table-striped table-hover" id="bookingTable">
             <thead>
                 <tr>
@@ -35,26 +37,26 @@
             </thead>
             <tbody>
                 @forelse ($bookings as $booking)
-                    <tr>
+              <tr>
                         <td>{{ $loop->iteration }}</td>
                         <td>{{ $booking->guest->FirstName . ' ' . $booking->guest->LastName }}</td>
                         <td>{{ $booking->checkindate }}</td>
                         <td>{{ $booking->checkoutdate }}</td>
-                        <td>{{ $booking->room->room_number  }}</td>
-                        <td>{{ $booking->room->roomtype->name  }}</td>
+                        <td>{{ $booking->room->room_number }}</td>
+                        <td>{{ $booking->room->roomtype->name }}</td>
                         <td>{{ $booking->room->roomtype->pricepernight }}</td>
                         <td>{{ $booking->room->roomtype->capacity }}</td>
-                        <td>{{ $booking->room->hotel->name  }}</td>
+                        <td>{{ $booking->room->hotel->name }}</td>
                         <td>{{ $booking->created_at }}</td>
                         <td>{{ $booking->updated_at }}</td>
-                        <td><a href="{{ route('booking.show',$booking->id) }}">View Details</a></td>
+                        <td><a href="{{ route('booking.show', $booking->id) }}">View Details</a></td>
                         <td class="action-buttons">
-                            <a href="{{ route('booking.edit',$booking->id) }}">
+                            <a href="{{ route('booking.edit', $booking->id) }}">
                                 <i class="fa-solid fa-user-pen"></i>
                             </a>
                         </td>
                         <td>
-                            <form method="post" action="{{ route('booking.destroy',$booking->id) }}">
+                            <form method="post" action="{{ route('booking.destroy', $booking->id) }}">
                                 @csrf
                                 @method('DELETE')
                                 <button type="submit" style="background:none;border:none;color:red;">
